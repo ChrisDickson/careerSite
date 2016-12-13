@@ -211,6 +211,10 @@ textarea {
     nav li {
         display: inline;
     }
+	 
+	 .col-small {
+		 width: 80%;
+	 }
  }
 
 
@@ -237,7 +241,7 @@ textarea {
 	 
 	.col-small {
 		min-width: 350px;
-		width:30%
+		width:20%
 	 }
 
 	 .col-large {
