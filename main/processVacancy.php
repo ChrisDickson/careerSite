@@ -1,90 +1,105 @@
-<?php
-
+<?php 
 	include('../includes/header.php');
-	include('../includes/navBar.php');
-	include('../includes/dbConn.php');	
+
+	$search		= $_POST['search'];
+	$url		= 'http://api.lmiforall.org.uk/api/v1/soc/search?q='.$search;
 
 	$search		= $_POST['search'];
 	$postCode	= $_POST['postcode'];
 
-	if(!isset($postCode) || trim($postCode) == '')
+	if(empty($search))
 	{
-		$url	= 'http://api.lmiforall.org.uk/api/v1/vacancies/search?keywords='.$search;	
+		$isEmpty = TRUE;
 	}
 	else
 	{
-		$postCode=preg_replace('/\s+/', '', $postCode);
+		if(!isset($postCode) || trim($postCode) == '')
+		{
+			$url	= 'http://api.lmiforall.org.uk/api/v1/vacancies/search?keywords='.$search;	
+		}
+		else
+		{
+			$postCode=preg_replace('/\s+/', '', $postCode);
 
-		$url	= 'http://api.lmiforall.org.uk/api/v1/vacancies/search?postcode='.$postCode.'&keywords='.$search;
-	}
+			$url	= 'http://api.lmiforall.org.uk/api/v1/vacancies/search?postcode='.$postCode.'&keywords='.$search;
+		}
 
-	function curlGetContents($url)
-	{
-		$ch = curl_init($url);
-		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-		curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
-		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
-		curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
-		$data = curl_exec($ch);
-		curl_close($ch);
-		return $data;
-	}
+		function curlGetContents($url)
+		{
+			$ch = curl_init($url);
+			curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+			curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
+			curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
+			curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
+			$data = curl_exec($ch);
+			curl_close($ch);
+			return $data;
+		}
 
-	$json 	= json_decode(curlGetcontents($url),true);
-
+		$json 	= json_decode(curlGetcontents($url),true);
+		}
 ?>
-
-<section class="contentArea">
-	<form id="contactName" action="processSearch.php" method="post">
-		<p> Enter the term to search for below: </p>
-		<div>
-			<br>
-			<p>Job field to search for:</p>
-			<input name="search" type="text" value="" size="30"/>
-			<br>
-		</div>
-		<div>
-			<br>
-			<p>Post-Code to search for (optional):</p>
-			<input name="postcode" type="text" value="" size="30"/>
-			<br>
-		</div>
-
-		<input name="kwSearch" type="submit" value="Find vacancies"/>
-		<br><br>
-		<div class="phpDiv">
+<div class="wrapper">
+	<aside>
+		<?php
+			include('../includes/navBar.php');
+		?>
+	</aside>
+	<main>
+		<div class="col col-large">
+			<div class="col col-small">
+				<form id="contactName" action="processSearch.php" method="post">
+					<p> Enter the term to search for below: </p>
+					<div>
+						<br>
+						<p>Job field to search for:</p>
+						<input name="search" type="text" value="" size="30"/>
+						<br>
+					</div>
+					<div>
+						<br>
+						<p>Post-Code to search for (optional):</p>
+						<input name="postcode" type="text" value="" size="30"/>
+						<br>
+					</div>	
+				</form>
+			</div>
 			<?php
-				foreach ($json as $key => $value)
+				if ($isEmpty)
 				{
-					foreach ($value as $k => $v)
+					echo "Please enter a keyword to search for below.";
+				}
+				else
+				{
+					foreach ($json as $key => $value)
 					{
-						echo ucfirst($k.": ");
-						if (is_array($v))
+						foreach ($value as $k => $v)
 						{
-							foreach ($v as $vKey => $vValue)
+							echo ucfirst($k.": ");
+							if (is_array($v))
 							{
-								echo ucfirst($vKey.': ');
-								echo $vValue;
-								echo '<br>';
+								foreach ($v as $vKey => $vValue)
+								{
+									echo ucfirst($vKey.': ');
+									echo $vValue;
+									echo '<br>';
+								}
 							}
-						}
-						else
-						{
-							echo $v;	
+							else
+							{
+								echo $v;	
+							}
+						echo "<br>";
 						}
 					echo "<br>";
 					}
-				echo "<br>";
 				}
 			?>
 		</div>
-	</form>
-</section>
-
-<?php 
-	include('../includes/footer.php')
-?>	
-
+	</main> 
 </div>
 </body>
+	<?php 
+		include('../includes/footer.php')
+	?>	
 </html>
