@@ -1,6 +1,8 @@
 <?php 
 	include('../includes/header.php');
 
+	$isEmpty = FALSE;
+
 	$search		= $_POST['search'];
 	$url		= 'http://api.lmiforall.org.uk/api/v1/soc/search?q='.$search;
 
