@@ -88,7 +88,6 @@
 					echo "<br><br>";
 				}	
 			}
-
 		?>
 		</div>
 	</main>
